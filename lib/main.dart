@@ -1,3 +1,4 @@
+import 'package:advanced_widgets/inherited_widget_example.dart';
 import 'package:flutter/material.dart';
 
 import 'widgets/custom_render_object.dart';
@@ -7,25 +8,47 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  var isDark = false;
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return InheritedWidgetExample(
+      isDark: isDark,
+      child: Builder(builder: (context) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          theme: InheritedWidgetExample.of(context).isDark
+              ? ThemeData.dark()
+              : ThemeData.light(),
+          home: MyHomePage(
+              title: 'Flutter Demo Home Page',
+              callback: () {
+                setState(() {
+                  isDark = !isDark;
+                });
+              }),
+        );
+      }),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
   final String title;
+  final VoidCallback? callback;
+
+  const MyHomePage({
+    super.key,
+    required this.title,
+    this.callback,
+  });
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -41,6 +64,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Switch(
+                value: InheritedWidgetExample.of(context).isDark,
+                onChanged: (_) {
+                  widget.callback?.call();
+                }),
             const CustomRenderObject(
               child: Text(
                 '123',
