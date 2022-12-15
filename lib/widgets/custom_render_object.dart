@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class CustomRenderObject extends SingleChildRenderObjectWidget {
-  const CustomRenderObject({super.key})
-      : super(child: const SizedBox.square(dimension: 100.0));
+  const CustomRenderObject({super.key, Widget? child}) : super(child: child);
 
   @override
   RenderObject createRenderObject(BuildContext context) {
